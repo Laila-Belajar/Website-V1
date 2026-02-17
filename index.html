@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Guru ALIF</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Space Grotesk', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            bg: '#0a0f1a',
+            card: '#111827',
+            border: '#1f2937',
+            accent: '#f97316',
+            accent2: '#22d3ee',
+            muted: '#6b7280',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --bg: #0a0f1a;
+      --card: #111827;
+      --border: #1f2937;
+      --accent: #f97316;
+      --accent2: #22d3ee;
+      --muted: #6b7280';
+    }
+
+    * { box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: #e5e7eb;
+    }
+
+    .font-display { font-family: 'Space Grotesk', sans-serif; }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+    .bg-pattern {
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(249,115,22,0.15), transparent),
+        radial-gradient(ellipse 60% 40% at 100% 100%, rgba(34,211,238,0.08), transparent),
+        linear-gradient(180deg, var(--bg) 0%, #0d1424 100%);
+    }
+
+    .grid-overlay {
+      background-image: 
+        linear-gradient(rgba(31,41,55,0.3) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(31,41,55,0.3) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(249,115,22,0.3); }
+      50% { box-shadow: 0 0 40px rgba(249,115,22,0.5); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+    .animate-float { animation: float 4s ease-in-out infinite; }
+    .animate-shake { animation: shake 0.3s ease-in-out; }
+
+    .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+    .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+
+    .card-hover { transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -15px rgba(0,0,0,0.5), 0 0 0 1px rgba(249,115,22,0.2); }
+
+    .nav-item { position: relative; transition: all 0.3s ease; }
+    .nav-item::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: all 0.3s ease; transform: translateX(-50%); }
+    .nav-item:hover::after, .nav-item.active::after { width: 80%; }
+    .nav-item.active { color: var(--accent); }
+
+    .section-content { opacity: 0; transform: translateY(20px); }
+    .section-content.active { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+    .status-hadir { background: rgba(34,197,94,0.2); color: #4ade80; }
+    .status-sakit { background: rgba(59,130,246,0.2); color: #60a5fa; }
+    .status-izin { background: rgba(234,179,8,0.2); color: #facc15; }
+    .status-alpa { background: rgba(239,68,68,0.2); color: #f87171; }
+
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent) !important; box-shadow: 0 0 0 3px rgba(249,115,22,0.15); }
+
+    @media print { body { background: white; color: black; } .no-print { display: none !important; } }
+
+    .orb { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+    .orb-1 { width: 400px; height: 400px; background: rgba(249,115,22,0.15); top: -100px; right: -100px; }
+    .orb-2 { width: 300px; height: 300px; background: rgba(34,211,238,0.1); bottom: 20%; left: -100px; }
+  </style>
+</head>
+<body class="min-h-screen bg-pattern overflow-x-hidden">
+  <!-- Background Elements -->
+  <div class="fixed inset-0 grid-overlay opacity-50"></div>
+  <div class="fixed inset-0 pointer-events-none overflow-hidden">
+    <div class="orb orb-1 animate-float"></div>
+    <div class="orb orb-2 animate-float" style="animation-delay: -2s;"></div>
+  </div>
+
+  <!-- PASSWORD MODAL -->
+  <div id="password-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center hidden no-print">
+    <div class="bg-card rounded-2xl border border-border p-8 max-w-sm w-full mx-4 shadow-2xl">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg class="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <h3 class="font-display font-bold text-xl text-white">Akses Terbatas</h3>
+        <p class="text-muted text-sm mt-2">Masukkan password untuk mengakses menu ini</p>
+      </div>
+      <input type="password" id="access-password" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm mb-4" placeholder="Password">
+      <div id="password-error" class="text-red-400 text-sm mb-4 text-center hidden">Password salah!</div>
+      <div class="flex gap-3">
+        <button onclick="closeModal()" class="flex-1 px-4 py-3 bg-border hover:bg-muted/50 text-white rounded-xl font-medium text-sm transition-colors">Batal</button>
+        <button onclick="verifyPassword()" class="flex-1 px-4 py-3 bg-accent hover:bg-orange-600 text-white rounded-xl font-medium text-sm transition-colors">Masuk</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="relative z-10 min-h-screen flex flex-col">
+    
+    <!-- Header -->
+    <header class="sticky top-0 z-50 backdrop-blur-xl bg-bg/80 border-b border-border no-print">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+        <div class="flex items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="relative">
+              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-br from-accent to-orange-600 flex items-center justify-center shadow-lg animate-pulse-glow">
+                <span class="text-white font-display font-bold text-xl sm:text-2xl">A</span>
+              </div>
+              <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-bg"></div>
+            </div>
+            <div>
+              <h1 class="font-display font-bold text-lg sm:text-xl lg:text-2xl text-white">ALIF Portal</h1>
+              <p class="text-muted text-xs sm:text-sm">Aspirasi, Literasi, Inovasi & Fun</p>
+            </div>
+          </div>
+          <div class="hidden sm:flex items-center gap-4">
+            <div class="text-right">
+              <p id="current-date" class="text-accent font-medium text-sm"></p>
+              <p id="current-time" class="font-display font-bold text-2xl text-white"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="border-t border-border/50 bg-card/50 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+          <div class="flex gap-1 overflow-x-auto py-2 scrollbar-hide">
+            <button onclick="showSection('profil')" class="nav-item active flex-shrink-0 px-4 py-2.5 text-sm font-medium text-white transition-colors" data-section="profil">Profil</button>
+            <button onclick="showSection('jadwal')" class="nav-item flex-shrink-0 px-4 py-2.5 text-sm font-medium text-muted hover:text-white transition-colors" data-section="jadwal">Jadwal</button>
+            <button onclick="showSection('silabus')" class="nav-item flex-shrink-0 px-4 py-2.5 text-sm font-medium text-muted hover:text-white transition-colors" data-section="silabus">Silabus</button>
+            <button onclick="showSection('materi')" class="nav-item flex-shrink-0 px-4 py-2.5 text-sm font-medium text-muted hover:text-white transition-colors" data-section="materi">Materi</button>
+            <button onclick="showSection('jurnal')" class="nav-item flex-shrink-0 px-4 py-2.5 text-sm font-medium text-muted hover:text-white transition-colors" data-section="jurnal">Jurnal</button>
+            <button onclick="showSection('assessment')" class="nav-item flex-shrink-0 px-4 py-2.5 text-sm font-medium text-muted hover:text-white transition-colors" data-section="assessment">Assessment</button>
+            <button onclick="showSection('nilai')" class="nav-item flex-shrink-0 px-4 py-2.5 text-sm font-medium text-muted hover:text-white transition-colors" data-section="nilai">Nilai</button>
+            <button onclick="showSection('catatan')" class="nav-item flex-shrink-0 px-4 py-2.5 text-sm font-medium text-muted hover:text-white transition-colors" data-section="catatan">Catatan</button>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        
+        <!-- PROFIL SECTION -->
+        <section id="section-profil" class="section-content active">
+          <div class="animate-slide-up stagger-1">
+            <h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">Profil Guru</h2>
+            <p class="text-muted mb-8">Informasi lengkap tentang guru pengajar</p>
+          </div>
+
+          <div class="animate-slide-up stagger-2 bg-gradient-to-br from-card to-bg rounded-3xl border border-border p-6 sm:p-8 mb-8 card-hover">
+            <div class="flex flex-col md:flex-row gap-6 items-start">
+              <div class="w-32 h-32 sm:w-40 sm:h-40 rounded-3xl bg-gradient-to-br from-accent via-orange-500 to-yellow-500 flex items-center justify-center shadow-2xl flex-shrink-0 animate-float">
+                <svg class="w-16 h-16 sm:w-20 sm:h-20 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              </div>
+              <div class="flex-1">
+                <h3 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">ALIF LAILA, S.Pd.</h3>
+                <p class="text-accent text-lg mb-4 italic">Passionately Bridging Language and Primary Education</p>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1.5 bg-accent/20 border border-accent/30 rounded-full text-accent text-sm">S1 PGSD</span>
+                  <span class="px-3 py-1.5 bg-accent2/20 border border-accent2/30 rounded-full text-accent text-sm">S1 English Education</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- JADWAL SECTION -->
+        <section id="section-jadwal" class="section-content hidden">
+          <div class="mb-6"><h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">Jadwal Mengajar</h2></div>
+          <div class="flex gap-2 mb-6 overflow-x-auto no-print">
+            <button onclick="showJadwalTab('daftar')" class="tab-btn jadwal-tab-btn px-5 py-2.5 bg-blue-600 text-white rounded-xl font-medium text-sm whitespace-nowrap" data-tab="daftar">Daftar Jadwal</button>
+            <button onclick="requestAccess('jadwal', 'input')" class="tab-btn jadwal-tab-btn px-5 py-2.5 bg-card text-muted rounded-xl font-medium text-sm whitespace-nowrap hover:bg-border transition-colors flex items-center gap-2" data-tab="input">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Input Jadwal
+            </button>
+          </div>
+          <div id="jadwal-tab-daftar" class="jadwal-tab-content">
+            <div class="bg-card rounded-2xl border border-border p-6 overflow-x-auto">
+              <table class="w-full min-w-[600px]">
+                <thead><tr class="border-b border-border"><th class="text-left py-4 px-4 text-muted font-medium">Hari</th><th class="text-left py-4 px-4 text-muted font-medium">Jam</th><th class="text-left py-4 px-4 text-muted font-medium">Kelas</th><th class="text-left py-4 px-4 text-muted font-medium">Mapel</th><th class="text-left py-4 px-4 text-muted font-medium">Ruangan</th></tr></thead>
+                <tbody id="jadwal-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+          <div id="jadwal-tab-input" class="jadwal-tab-content hidden">
+            <div class="bg-card rounded-2xl border border-border p-6">
+              <h3 class="font-display font-bold text-lg text-white mb-6">Form Input Jadwal Baru</h3>
+              <form id="form-jadwal" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Hari</label><select id="jadwal-hari" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required><option value="Senin">Senin</option><option value="Selasa">Selasa</option><option value="Rabu">Rabu</option><option value="Kamis">Kamis</option><option value="Jumat">Jumat</option></select></div>
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Jam</label><input type="text" id="jadwal-jam" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" placeholder="07:00 - 08:10" required></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div><label class="block text-gray-300 text-sm font-medium mb-2">Kelas</label><select id="jadwal-kelas" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required><option value="1">Kelas 1</option><option value="2">Kelas 2</option><option value="3">Kelas 3</option></select></div>
+                   <div><label class="block text-gray-300 text-sm font-medium mb-2">Mapel</label><input type="text" id="jadwal-mapel" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" placeholder="Nama Mata Pelajaran" required></div>
+                </div>
+                <div><label class="block text-gray-300 text-sm font-medium mb-2">Ruangan</label><input type="text" id="jadwal-ruangan" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" placeholder="Ruang Kelas 1" required></div>
+                <div class="flex gap-3 pt-4"><button type="submit" class="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium text-sm transition-colors">Simpan</button></div>
+                <div id="jadwal-message" class="hidden"></div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- SILABUS SECTION -->
+        <section id="section-silabus" class="section-content hidden">
+          <div class="mb-6"><h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">Silabus</h2></div>
+          <div class="flex gap-2 mb-6 overflow-x-auto no-print">
+            <button onclick="showSilabusTab('daftar')" class="tab-btn silabus-tab-btn px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-medium text-sm whitespace-nowrap" data-tab="daftar">Daftar Silabus</button>
+            <button onclick="requestAccess('silabus', 'input')" class="tab-btn silabus-tab-btn px-5 py-2.5 bg-card text-muted rounded-xl font-medium text-sm whitespace-nowrap hover:bg-border transition-colors flex items-center gap-2" data-tab="input">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Input Silabus
+            </button>
+          </div>
+          <div id="silabus-tab-daftar" class="silabus-tab-content"><div id="silabus-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div></div>
+          <div id="silabus-tab-input" class="silabus-tab-content hidden">
+            <div class="bg-card rounded-2xl border border-border p-6">
+              <h3 class="font-display font-bold text-lg text-white mb-6">Form Input Silabus</h3>
+              <form id="form-silabus" class="space-y-4">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Mapel</label><select id="silabus-mapel" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required><option value="Bahasa Indonesia">Bahasa Indonesia</option><option value="Matematika">Matematika</option><option value="Pancasila">Pancasila</option></select></div>
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Kelas</label><select id="silabus-kelas" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required><option value="1">Kelas 1</option><option value="2">Kelas 2</option><option value="3">Kelas 3</option></select></div>
+                </div>
+                <div><label class="block text-gray-300 text-sm font-medium mb-2">Deskripsi</label><textarea id="silabus-deskripsi" rows="3" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required></textarea></div>
+                <div class="flex gap-3 pt-4"><button type="submit" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl font-medium text-sm transition-colors">Simpan</button></div>
+                <div id="silabus-message" class="hidden"></div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- MATERI SECTION -->
+        <section id="section-materi" class="section-content hidden">
+          <div class="mb-6"><h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">Bahan Ajar</h2></div>
+          <div class="flex gap-2 mb-6 overflow-x-auto no-print">
+            <button onclick="showMateriTab('daftar')" class="tab-btn materi-tab-btn px-5 py-2.5 bg-amber-600 text-white rounded-xl font-medium text-sm whitespace-nowrap" data-tab="daftar">Daftar Materi</button>
+            <button onclick="requestAccess('materi', 'input')" class="tab-btn materi-tab-btn px-5 py-2.5 bg-card text-muted rounded-xl font-medium text-sm whitespace-nowrap hover:bg-border transition-colors flex items-center gap-2" data-tab="input">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Input Materi
+            </button>
+          </div>
+          <div id="materi-tab-daftar" class="materi-tab-content"><div id="materi-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div></div>
+          <div id="materi-tab-input" class="materi-tab-content hidden">
+             <div class="bg-card rounded-2xl border border-border p-6">
+              <h3 class="font-display font-bold text-lg text-white mb-6">Form Input Materi</h3>
+              <form id="form-materi" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Judul</label><input type="text" id="materi-judul" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" placeholder="Judul Materi" required></div>
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Jenis</label><select id="materi-jenis" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required><option value="PDF">PDF</option><option value="Video">Video</option></select></div>
+                </div>
+                <div class="flex gap-3 pt-4"><button type="submit" class="px-6 py-3 bg-amber-600 hover:bg-amber-500 text-white rounded-xl font-medium text-sm transition-colors">Simpan</button></div>
+                <div id="materi-message" class="hidden"></div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- JURNAL SECTION -->
+        <section id="section-jurnal" class="section-content hidden">
+          <div class="mb-6"><h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">Jurnal Pembelajaran</h2></div>
+          <div class="flex gap-2 mb-6 overflow-x-auto no-print">
+            <button onclick="showJurnalTab('rekap-absen')" class="tab-btn jurnal-tab-btn px-5 py-2.5 bg-teal-600 text-white rounded-xl font-medium text-sm whitespace-nowrap" data-tab="rekap-absen">Rekap Absen</button>
+            <button onclick="showJurnalTab('rekap-jurnal')" class="tab-btn jurnal-tab-btn px-5 py-2.5 bg-card text-muted rounded-xl font-medium text-sm whitespace-nowrap hover:bg-border transition-colors" data-tab="rekap-jurnal">Rekap Jurnal</button>
+            <button onclick="requestAccess('jurnal', 'input')" class="tab-btn jurnal-tab-btn px-5 py-2.5 bg-card text-muted rounded-xl font-medium text-sm whitespace-nowrap hover:bg-border transition-colors flex items-center gap-2" data-tab="input">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Input Jurnal
+            </button>
+          </div>
+
+          <div id="jurnal-tab-rekap-absen" class="jurnal-tab-content">
+            <div class="bg-card rounded-2xl border border-border p-6 overflow-x-auto">
+              <table class="w-full"><thead><tr class="border-b border-border"><th class="text-left py-3 px-4 text-muted font-medium">Tanggal</th><th class="text-left py-3 px-4 text-muted font-medium">Kelas</th><th class="text-left py-3 px-4 text-muted font-medium">Nama</th><th class="text-left py-3 px-4 text-muted font-medium">Status</th></tr></thead><tbody id="rekap-absen-tbody"></tbody></table>
+            </div>
+          </div>
+          <div id="jurnal-tab-rekap-jurnal" class="jurnal-tab-content hidden">
+            <div class="bg-card rounded-2xl border border-border p-6 overflow-x-auto">
+              <table class="w-full"><thead><tr class="border-b border-border"><th class="text-left py-3 px-4 text-muted font-medium">Tanggal</th><th class="text-left py-3 px-4 text-muted font-medium">Kelas</th><th class="text-left py-3 px-4 text-muted font-medium">Materi</th><th class="text-left py-3 px-4 text-muted font-medium">Catatan</th></tr></thead><tbody id="rekap-jurnal-tbody"></tbody></table>
+            </div>
+          </div>
+          <div id="jurnal-tab-input" class="jurnal-tab-content hidden">
+            <div class="bg-card rounded-2xl border border-border p-6 mb-6">
+              <form id="form-jurnal" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Tanggal</label><input type="date" id="jurnal-tanggal" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required></div>
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Kelas</label><select id="jurnal-kelas" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required onchange="loadSiswaFromSpreadsheet(this.value)"><option value="">Pilih Kelas</option><option value="1">Kelas 1</option><option value="2">Kelas 2</option><option value="3">Kelas 3</option></select></div>
+                </div>
+                <div><label class="block text-gray-300 text-sm font-medium mb-2">Materi</label><textarea id="jurnal-materi" rows="2" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required></textarea></div>
+                <div><label class="block text-gray-300 text-sm font-medium mb-2">Catatan</label><textarea id="jurnal-catatan" rows="2" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm"></textarea></div>
+                <div id="jurnal-message" class="hidden"></div>
+              </form>
+            </div>
+            <div id="absensi-container" class="bg-card rounded-2xl border border-border p-6 hidden">
+              <div class="flex items-center justify-between mb-6">
+                <h3 class="font-display font-bold text-lg text-white">Absensi Siswa</h3>
+                <button type="button" onclick="setAllHadir()" class="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg font-medium text-sm transition-colors">Semua Hadir</button>
+              </div>
+              <div id="loading-siswa" class="text-center py-8 hidden"><div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-accent"></div></div>
+              <div id="absensi-grid" class="space-y-3"></div>
+              <div class="mt-6 pt-4 border-t border-border"><button type="button" onclick="submitJurnalLengkap()" class="w-full px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-xl font-medium text-sm transition-colors">Simpan Jurnal & Absensi</button></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ASSESSMENT SECTION -->
+        <section id="section-assessment" class="section-content hidden">
+          <div class="mb-6"><h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">Assessment</h2></div>
+          <div class="max-w-2xl">
+            <a href="#" class="group block bg-gradient-to-br from-cyan-900/30 to-cyan-800/10 rounded-2xl p-8 border border-cyan-700/50 hover:border-cyan-500 transition-all card-hover">
+              <div class="flex items-start gap-4">
+                <div class="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                </div>
+                <div>
+                  <h3 class="font-display font-bold text-xl text-cyan-300 mb-2">Platform Ujian Online</h3>
+                  <p class="text-gray-300">Klik untuk mengakses platform ujian online siswa</p>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- NILAI SECTION -->
+        <section id="section-nilai" class="section-content hidden">
+          <div class="mb-6"><h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">Buku Nilai</h2></div>
+          <div class="flex gap-2 mb-6 overflow-x-auto no-print">
+            <button onclick="showNilaiTab('rekap-nilai')" class="tab-btn nilai-tab-btn px-5 py-2.5 bg-rose-600 text-white rounded-xl font-medium text-sm whitespace-nowrap" data-tab="rekap-nilai">Rekap Nilai</button>
+            <button onclick="showNilaiTab('rekap-admin')" class="tab-btn nilai-tab-btn px-5 py-2.5 bg-card text-muted rounded-xl font-medium text-sm whitespace-nowrap hover:bg-border transition-colors" data-tab="rekap-admin">Rekap Nilai (Admin)</button>
+            <button onclick="requestAccess('nilai', 'input')" class="tab-btn nilai-tab-btn px-5 py-2.5 bg-card text-muted rounded-xl font-medium text-sm whitespace-nowrap hover:bg-border transition-colors flex items-center gap-2" data-tab="input">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Input Nilai
+            </button>
+          </div>
+          <div id="nilai-tab-rekap-nilai" class="nilai-tab-content">
+             <div class="bg-card rounded-2xl border border-border p-6 overflow-x-auto"><table class="w-full"><thead><tr class="border-b border-border"><th class="text-left py-3 px-4 text-muted font-medium">Nama</th><th class="text-left py-3 px-4 text-muted font-medium">Kelas</th><th class="text-left py-3 px-4 text-muted font-medium">Mapel</th><th class="text-left py-3 px-4 text-muted font-medium">Nilai</th></tr></thead><tbody id="rekap-nilai-tbody"></tbody></table></div>
+          </div>
+          <div id="nilai-tab-rekap-admin" class="nilai-tab-content hidden">
+             <div class="bg-card rounded-2xl border border-border p-6 overflow-x-auto"><table class="w-full"><thead><tr class="border-b border-border"><th class="text-left py-3 px-4 text-muted font-medium">No</th><th class="text-left py-3 px-4 text-muted font-medium">Tanggal</th><th class="text-left py-3 px-4 text-muted font-medium">Nama</th><th class="text-left py-3 px-4 text-muted font-medium">Kelas</th><th class="text-left py-3 px-4 text-muted font-medium">Mapel</th><th class="text-left py-3 px-4 text-muted font-medium">Nilai</th></tr></thead><tbody id="rekap-admin-tbody"></tbody></table></div>
+          </div>
+          <div id="nilai-tab-input" class="nilai-tab-content hidden">
+            <div class="bg-card rounded-2xl border border-border p-6">
+              <h3 class="font-display font-bold text-lg text-white mb-6">Form Input Nilai</h3>
+              <form id="form-nilai" class="space-y-4">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Nama</label><input type="text" id="nilai-nama" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required></div>
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Kelas</label><select id="nilai-kelas" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required><option value="1">Kelas 1</option><option value="2">Kelas 2</option><option value="3">Kelas 3</option></select></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Mapel</label><select id="nilai-mapel" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required><option value="Bahasa Indonesia">Bahasa Indonesia</option><option value="Matematika">Matematika</option></select></div>
+                  <div><label class="block text-gray-300 text-sm font-medium mb-2">Nilai</label><input type="number" id="nilai-angka" min="0" max="100" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required></div>
+                </div>
+                <div class="flex gap-3 pt-4"><button type="submit" class="px-6 py-3 bg-rose-600 hover:bg-rose-500 text-white rounded-xl font-medium text-sm transition-colors">Simpan Nilai</button></div>
+                <div id="nilai-message" class="hidden"></div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <!-- CATATAN SECTION -->
+        <section id="section-catatan" class="section-content hidden">
+          <div class="mb-6"><h2 class="font-display font-bold text-2xl sm:text-3xl text-white mb-2">Catatan Guru</h2></div>
+          <div class="flex gap-2 mb-6 overflow-x-auto no-print">
+            <button onclick="showCatatanTab('rekap')" class="tab-btn catatan-tab-btn px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-medium text-sm whitespace-nowrap" data-tab="rekap">Daftar Catatan</button>
+            <button onclick="requestAccess('catatan', 'input')" class="tab-btn catatan-tab-btn px-5 py-2.5 bg-card text-muted rounded-xl font-medium text-sm whitespace-nowrap hover:bg-border transition-colors flex items-center gap-2" data-tab="input">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg> Input Catatan
+            </button>
+          </div>
+          <div id="catatan-tab-rekap" class="catatan-tab-content"><div class="bg-card rounded-2xl border border-border p-6 overflow-x-auto"><table class="w-full"><thead><tr class="border-b border-border"><th class="text-left py-3 px-4 text-muted font-medium">Nama</th><th class="text-left py-3 px-4 text-muted font-medium">Catatan</th><th class="text-left py-3 px-4 text-muted font-medium">Waktu</th></tr></thead><tbody id="rekap-catatan-tbody"></tbody></table></div></div>
+          <div id="catatan-tab-input" class="catatan-tab-content hidden">
+             <div class="bg-card rounded-2xl border border-border p-6">
+              <form id="form-catatan" class="space-y-4">
+                <div><label class="block text-gray-300 text-sm font-medium mb-2">Nama Siswa</label><input type="text" id="catatan-nama" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required></div>
+                <div><label class="block text-gray-300 text-sm font-medium mb-2">Catatan</label><textarea id="catatan-isi" rows="4" class="w-full px-4 py-3 bg-bg border border-border rounded-xl text-white text-sm" required></textarea></div>
+                <div class="flex gap-3 pt-4"><button type="submit" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium text-sm transition-colors">Simpan Catatan</button></div>
+                <div id="catatan-message" class="hidden"></div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+    <footer class="border-t border-border bg-card/50 backdrop-blur-sm py-4 no-print">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center"><p class="text-muted text-sm">Portal Guru ALIF &copy; 2024</p></div>
+    </footer>
+  </div>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    // ==========================================
+    // STATE MANAGEMENT
+    // ==========================================
+    let dataStore = { jadwal: [], silabus: [], materi: [], jurnal: [], absen: [], nilai: [], catatan: [], siswa: {} };
+    let isLoggedIn = false;
+    const CORRECT_PASSWORD = "Fatih@13";
+    let pendingAction = null;
+    let currentAbsensiList = [];
+
+    // ==========================================
+    // INITIALIZATION
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', function() {
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+      
+      const today = new Date().toISOString().split('T')[0];
+      document.querySelectorAll('input[type="date"]').forEach(el => el.value = today);
+      
+      // Load data dari Spreadsheet saat mulai
+      loadInitialData();
+
+      // Event Listeners Form
+      document.getElementById('form-jadwal').addEventListener('submit', submitJadwal);
+      document.getElementById('form-silabus').addEventListener('submit', submitSilabus);
+      document.getElementById('form-materi').addEventListener('submit', submitMateri);
+      document.getElementById('form-nilai').addEventListener('submit', submitNilai);
+      document.getElementById('form-catatan').addEventListener('submit', submitCatatan);
+      document.getElementById('access-password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') verifyPassword();
+      });
+    });
+
+    // ==========================================
+    // GOOGLE SCRIPT RUNNER (KONEKSI BACKEND)
+    // ==========================================
+    function loadInitialData() {
+       google.script.run.withSuccessHandler(function(data) {
+         // Parsing Data Siswa ke format Group by Kelas
+         if(data.DataSiswa) {
+           data.DataSiswa.forEach(s => {
+             if(!dataStore.siswa[s.Kelas]) dataStore.siswa[s.Kelas] = [];
+             dataStore.siswa[s.Kelas].push({id: s.ID, nama: s.Nama});
+           });
+         }
+         
+         // Mapping data dari Spreadsheet ke DataStore Frontend
+         dataStore.jadwal = data.Jadwal || [];
+         dataStore.silabus = data.Silabus || [];
+         dataStore.materi = data.Materi || [];
+         dataStore.jurnal = data.Jurnal || [];
+         dataStore.absen = data.Absensi || [];
+         dataStore.nilai = data.Nilai || [];
+         dataStore.catatan = data.Catatan || [];
+
+         renderAll();
+       }).getAllData();
+    }
+
+    // ==========================================
+    // RENDER FUNCTIONS
+    // ==========================================
+    function renderAll() {
+      renderJadwal();
+      renderSilabus();
+      renderMateri();
+      renderRekapJurnal();
+      renderRekapAbsen();
+      renderRekapNilai();
+      renderRekapAdmin();
+      renderCatatan();
+    }
+    
+    function updateDateTime() {
+      const now = new Date();
+      const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      document.getElementById('current-date').textContent = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
+      document.getElementById('current-time').textContent = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+    }
+    
+    function renderJadwal() {
+      const tbody = document.getElementById('jadwal-tbody');
+      tbody.innerHTML = dataStore.jadwal.map(item => `
+        <tr class="border-b border-border hover:bg-border/30 transition-colors">
+          <td class="py-4 px-4 text-white">${item.Hari}</td>
+          <td class="py-4 px-4 text-gray-300">${item.Jam}</td>
+          <td class="py-4 px-4 text-accent">Kelas ${item.Kelas}</td>
+          <td class="py-4 px-4 text-gray-300">${item.Mapel}</td>
+          <td class="py-4 px-4 text-gray-300">${item.Ruangan}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="5" class="py-4 text-center text-muted">Tidak ada data</td></tr>';
+    }
+
+    function renderRekapNilai() {
+      const tbody = document.getElementById('rekap-nilai-tbody');
+      tbody.innerHTML = dataStore.nilai.map(n => `
+        <tr class="border-b border-border">
+          <td class="py-3 px-4 text-white">${n.Nama}</td>
+          <td class="py-3 px-4 text-white">${n.Kelas}</td>
+          <td class="py-3 px-4 text-gray-300">${n.Mapel}</td>
+          <td class="py-3 px-4 font-bold text-accent">${n.Nilai}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="4" class="py-8 text-center text-muted">Belum ada nilai</td></tr>';
+    }
+
+    function renderRekapAdmin() {
+      const tbody = document.getElementById('rekap-admin-tbody');
+      tbody.innerHTML = dataStore.nilai.map((n, i) => `
+        <tr class="border-b border-border">
+          <td class="py-3 px-4 text-muted">${i+1}</td>
+          <td class="py-3 px-4 text-white">${n.Tanggal ? new Date(n.Tanggal).toLocaleDateString('id-ID') : '-'}</td>
+          <td class="py-3 px-4 text-white">${n.Nama}</td>
+          <td class="py-3 px-4 text-white">${n.Kelas}</td>
+          <td class="py-3 px-4 text-gray-300">${n.Mapel}</td>
+          <td class="py-3 px-4 font-bold text-accent">${n.Nilai}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="6" class="py-8 text-center text-muted">Belum ada data</td></tr>';
+    }
+
+    function renderRekapAbsen() {
+      const tbody = document.getElementById('rekap-absen-tbody');
+      tbody.innerHTML = dataStore.absen.map(a => `
+        <tr class="border-b border-border">
+          <td class="py-3 px-4 text-white">${a.Tanggal ? new Date(a.Tanggal).toLocaleDateString('id-ID') : '-'}</td>
+          <td class="py-3 px-4 text-white">${a.Kelas}</td>
+          <td class="py-3 px-4 text-white">${a.NamaSiswa}</td>
+          <td class="py-3 px-4"><span class="px-2 py-1 rounded text-xs status-${a.Status.toLowerCase()}">${a.Status}</span></td>
+        </tr>
+      `).join('') || '<tr><td colspan="4" class="py-8 text-center text-muted">Belum ada data</td></tr>';
+    }
+
+    function renderRekapJurnal() {
+      const tbody = document.getElementById('rekap-jurnal-tbody');
+      tbody.innerHTML = dataStore.jurnal.map(j => `
+        <tr class="border-b border-border">
+          <td class="py-3 px-4 text-white">${j.Tanggal ? new Date(j.Tanggal).toLocaleDateString('id-ID') : '-'}</td>
+          <td class="py-3 px-4 text-white">${j.Kelas}</td>
+          <td class="py-3 px-4 text-gray-300">${j.Materi}</td>
+          <td class="py-3 px-4 text-gray-400">${j.Catatan || '-'}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="4" class="py-8 text-center text-muted">Belum ada jurnal</td></tr>';
+    }
+
+    function renderSilabus() {
+      const grid = document.getElementById('silabus-grid');
+      grid.innerHTML = dataStore.silabus.map(item => `
+        <div class="bg-card rounded-2xl border border-border p-6 card-hover">
+          <h3 class="font-display font-bold text-white mb-2">${item.Mapel}</h3>
+          <p class="text-muted text-sm mb-2">Kelas ${item.Kelas}</p>
+          <p class="text-gray-400 text-sm">${item.Deskripsi}</p>
+        </div>
+      `).join('') || '<p class="text-muted col-span-3 text-center py-12">Belum ada data</p>';
+    }
+
+    function renderMateri() {
+      const grid = document.getElementById('materi-grid');
+      grid.innerHTML = dataStore.materi.map(item => `
+        <div class="bg-card rounded-2xl border border-border p-6 card-hover">
+          <h3 class="font-display font-bold text-white mb-2">${item.Judul}</h3>
+          <span class="px-3 py-1 bg-amber-500/20 text-amber-400 rounded-lg text-xs">${item.Jenis}</span>
+        </div>
+      `).join('') || '<p class="text-muted col-span-2 text-center py-12">Belum ada data</p>';
+    }
+
+    function renderCatatan() {
+      const tbody = document.getElementById('rekap-catatan-tbody');
+      tbody.innerHTML = dataStore.catatan.map(c => `
+        <tr class="border-b border-border">
+          <td class="py-3 px-4 text-white">${c.Nama}</td>
+          <td class="py-3 px-4 text-gray-300">${c.Isi}</td>
+          <td class="py-3 px-4 text-muted text-sm">${c.Waktu}</td>
+        </tr>
+      `).join('') || '<tr><td colspan="3" class="py-8 text-center text-muted">Belum ada catatan</td></tr>';
+    }
+
+    // ==========================================
+    // LOAD SISWA LOGIC
+    // ==========================================
+    function loadSiswaFromSpreadsheet(kelas) {
+      const container = document.getElementById('absensi-container');
+      const loading = document.getElementById('loading-siswa');
+      const grid = document.getElementById('absensi-grid');
+      
+      if (!kelas) { container.classList.add('hidden'); return; }
+
+      container.classList.remove('hidden');
+      loading.classList.remove('hidden');
+      grid.innerHTML = '';
+
+      // Simulasi delay + ambil dari dataStore yang sudah di-load
+      setTimeout(() => {
+        loading.classList.add('hidden');
+        const siswaList = dataStore.siswa[kelas] || [];
+        
+        if (siswaList.length === 0) {
+          grid.innerHTML = '<p class="text-center text-muted py-8">Tidak ada data siswa untuk kelas ini di Sheet.</p>';
+          return;
+        }
+
+        currentAbsensiList = siswaList.map(s => ({ ...s, status: 'Hadir' }));
+        renderAbsensiGrid();
+      }, 300);
+    }
+
+    function renderAbsensiGrid() {
+      const grid = document.getElementById('absensi-grid');
+      grid.innerHTML = currentAbsensiList.map((s, i) => `
+        <div class="bg-bg/50 rounded-xl p-4 border border-border flex flex-col sm:flex-row sm:items-center gap-3">
+          <div class="flex-1 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+              ${s.nama.charAt(0)}
+            </div>
+            <p class="text-white font-medium">${s.nama}</p>
+          </div>
+          <div class="flex gap-2 justify-end">
+            ${['Hadir', 'Sakit', 'Izin', 'Alpa'].map(st => `
+              <button onclick="setAbsenStatus(${i}, '${st}')" class="px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${s.status === st ? 'bg-green-500/30 text-green-300 border border-green-500' : 'bg-border text-gray-400 hover:bg-green-500/20'}">${st}</button>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function setAbsenStatus(index, status) {
+      currentAbsensiList[index].status = status;
+      renderAbsensiGrid();
+    }
+
+    function setAllHadir() {
+      currentAbsensiList.forEach(s => s.status = 'Hadir');
+      renderAbsensiGrid();
+    }
+
+    // ==========================================
+    // FORM SUBMISSIONS (SEND TO BACKEND)
+    // ==========================================
+    function submitJadwal(e) {
+      e.preventDefault();
+      const data = {
+        Hari: document.getElementById('jadwal-hari').value,
+        Jam: document.getElementById('jadwal-jam').value,
+        Kelas: document.getElementById('jadwal-kelas').value,
+        Mapel: document.getElementById('jadwal-mapel').value,
+        Ruangan: document.getElementById('jadwal-ruangan').value
+      };
+      
+      google.script.run.withSuccessHandler(() => {
+        showMessage('jadwal-message', 'Berhasil disimpan!', 'success');
+        dataStore.jadwal.push(data); // Update local
+        renderJadwal();
+        document.getElementById('form-jadwal').reset();
+      }).addData('Jadwal', data);
+    }
+
+    function submitSilabus(e) {
+      e.preventDefault();
+      const data = {
+        Mapel: document.getElementById('silabus-mapel').value,
+        Kelas: document.getElementById('silabus-kelas').value,
+        Deskripsi: document.getElementById('silabus-deskripsi').value
+      };
+      google.script.run.withSuccessHandler(() => {
+        showMessage('silabus-message', 'Berhasil disimpan!', 'success');
+        dataStore.silabus.push(data);
+        renderSilabus();
+      }).addData('Silabus', data);
+    }
+
+    function submitMateri(e) {
+      e.preventDefault();
+      const data = {
+        Judul: document.getElementById('materi-judul').value,
+        Jenis: document.getElementById('materi-jenis').value
+      };
+      google.script.run.withSuccessHandler(() => {
+        showMessage('materi-message', 'Berhasil disimpan!', 'success');
+        dataStore.materi.push(data);
+        renderMateri();
+      }).addData('Materi', data);
+    }
+
+    function submitNilai(e) {
+      e.preventDefault();
+      const data = {
+        Nama: document.getElementById('nilai-nama').value,
+        Kelas: document.getElementById('nilai-kelas').value,
+        Mapel: document.getElementById('nilai-mapel').value,
+        Nilai: document.getElementById('nilai-angka').value,
+        Tanggal: new Date().toISOString().split('T')[0]
+      };
+      
+      google.script.run.withSuccessHandler(() => {
+        showMessage('nilai-message', 'Berhasil disimpan!', 'success');
+        dataStore.nilai.push(data);
+        renderRekapNilai();
+        renderRekapAdmin();
+        document.getElementById('form-nilai').reset();
+      }).addData('Nilai', data);
+    }
+
+    function submitCatatan(e) {
+      e.preventDefault();
+      const data = {
+        Nama: document.getElementById('catatan-nama').value,
+        Isi: document.getElementById('catatan-isi').value,
+        Waktu: new Date().toLocaleString('id-ID')
+      };
+      google.script.run.withSuccessHandler(() => {
+        showMessage('catatan-message', 'Berhasil disimpan!', 'success');
+        dataStore.catatan.push(data);
+        renderCatatan();
+      }).addData('Catatan', data);
+    }
+
+    function submitJurnalLengkap() {
+      const jurnalData = {
+        tanggal: document.getElementById('jurnal-tanggal').value,
+        kelas: document.getElementById('jurnal-kelas').value,
+        materi: document.getElementById('jurnal-materi').value,
+        catatan: document.getElementById('jurnal-catatan').value
+      };
+
+      if (!jurnalData.tanggal || !jurnalData.kelas || !jurnalData.materi) {
+        showMessage('jurnal-message', 'Harap lengkapi semua field wajib!', 'error');
+        return;
+      }
+      
+      if (currentAbsensiList.length === 0) {
+         showMessage('jurnal-message', 'Tidak ada siswa untuk diabsen.', 'error');
+         return;
+      }
+
+      // Kirim ke Backend Khusus (saveJurnalAndAbsensi)
+      google.script.run.withSuccessHandler(() => {
+        showMessage('jurnal-message', 'Jurnal & Absensi tersimpan!', 'success');
+        document.getElementById('form-jurnal').reset();
+        document.getElementById('absensi-container').classList.add('hidden');
+        currentAbsensiList = [];
+        // Refresh data dari server untuk memastikan sinkron
+        loadInitialData();
+      }).saveJurnalAndAbsensi(jurnalData, currentAbsensiList);
+    }
+
+    // ==========================================
+    // NAVIGATION & UI HELPERS
+    // ==========================================
+    function showSection(sectionId) {
+      document.querySelectorAll('.section-content').forEach(el => { el.classList.add('hidden'); el.classList.remove('active'); });
+      document.getElementById(`section-${sectionId}`).classList.remove('hidden');
+      setTimeout(() => document.getElementById(`section-${sectionId}`).classList.add('active'), 10);
+
+      document.querySelectorAll('.nav-item').forEach(btn => { btn.classList.remove('active', 'text-white'); btn.classList.add('text-muted'); });
+      const activeBtn = document.querySelector(`[data-section="${sectionId}"]`);
+      if (activeBtn) { activeBtn.classList.add('active', 'text-white'); activeBtn.classList.remove('text-muted'); }
+
+      if (sectionId === 'jurnal') showJurnalTab('rekap-absen');
+      else if (sectionId === 'nilai') showNilaiTab('rekap-nilai');
+      else if (sectionId === 'catatan') showCatatanTab('rekap');
+      else if (sectionId === 'jadwal') showJadwalTab('daftar');
+      else if (sectionId === 'silabus') showSilabusTab('daftar');
+      else if (sectionId === 'materi') showMateriTab('daftar');
+    }
+
+    function showJadwalTab(tab) { showTab('jadwal', tab, 'jadwal-tab-btn'); }
+    function showSilabusTab(tab) { showTab('silabus', tab, 'silabus-tab-btn'); }
+    function showMateriTab(tab) { showTab('materi', tab, 'materi-tab-btn'); }
+    function showJurnalTab(tab) { showTab('jurnal', tab, 'jurnal-tab-btn'); }
+    function showNilaiTab(tab) { showTab('nilai', tab, 'nilai-tab-btn'); }
+    function showCatatanTab(tab) { showTab('catatan', tab, 'catatan-tab-btn'); }
+
+    function showTab(tabGroup, tabId, btnClass) {
+      document.querySelectorAll(`.${tabGroup}-tab-content`).forEach(el => el.classList.add('hidden'));
+      document.getElementById(`${tabGroup}-tab-${tabId}`).classList.remove('hidden');
+      document.querySelectorAll(`.${btnClass}`).forEach(btn => {
+        const isActive = btn.dataset.tab === tabId;
+        // Reset style
+        btn.className = `tab-btn ${btnClass} px-5 py-2.5 rounded-xl font-medium text-sm whitespace-nowrap transition-colors`;
+        if (isActive) {
+           btn.classList.remove('bg-card', 'text-muted');
+           btn.classList.add('text-white');
+           // Add specific color
+           if(tabGroup === 'jadwal') btn.classList.add('bg-blue-600');
+           else if(tabGroup === 'silabus') btn.classList.add('bg-emerald-600');
+           else if(tabGroup === 'materi') btn.classList.add('bg-amber-600');
+           else if(tabGroup === 'jurnal') {
+             if(tabId === 'input') btn.classList.add('bg-purple-600');
+             else btn.classList.add('bg-teal-600');
+           }
+           else if(tabGroup === 'nilai') btn.classList.add('bg-rose-600');
+           else if(tabGroup === 'catatan') btn.classList.add('bg-indigo-600');
+        } else {
+           btn.classList.add('bg-card', 'text-muted');
+        }
+      });
+    }
+    
+    function requestAccess(section, tab) {
+       pendingAction = { section, tab };
+       document.getElementById('password-modal').classList.remove('hidden');
+       document.getElementById('access-password').focus();
+    }
+    
+    function verifyPassword() {
+       const input = document.getElementById('access-password').value;
+       if(input === CORRECT_PASSWORD) {
+          isLoggedIn = true;
+          closeModal();
+          if(pendingAction) {
+             executeTabSwitch(pendingAction.section, pendingAction.tab);
+          }
+       } else {
+          document.getElementById('password-error').classList.remove('hidden');
+          document.getElementById('access-password').classList.add('animate-shake');
+          setTimeout(() => document.getElementById('access-password').classList.remove('animate-shake'), 300);
+       }
+    }
+    
+    function closeModal() {
+       document.getElementById('password-modal').classList.add('hidden');
+       document.getElementById('password-error').classList.add('hidden');
+    }
+    
+    function executeTabSwitch(section, tab) {
+       switch(section) {
+          case 'jadwal': showJadwalTab(tab); break;
+          case 'silabus': showSilabusTab(tab); break;
+          case 'materi': showMateriTab(tab); break;
+          case 'jurnal': showJurnalTab(tab); break;
+          case 'nilai': showNilaiTab(tab); break;
+          case 'catatan': showCatatanTab(tab); break;
+       }
+    }
+
+    function showMessage(elId, text, type) {
+      const el = document.getElementById(elId);
+      el.textContent = text;
+      el.className = `p-4 rounded-xl text-sm mt-4 ${type === 'success' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`;
+      el.classList.remove('hidden');
+    }
+    
+    function printContent(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const w = window.open('', '_blank');
+      w.document.write(`<html><head><title>Print</title><style>table{width:100%;border-collapse:collapse;}th,td{border:1px solid #ccc;padding:8px;text-align:left;}th{background:#f0f0f0;}</style></head><body>${el.outerHTML}</body></html>`);
+      w.document.close();
+      w.print();
+    }
+  </script>
+</body>
+</html>
